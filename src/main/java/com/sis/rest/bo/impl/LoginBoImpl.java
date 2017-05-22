@@ -23,5 +23,6 @@ public class LoginBoImpl implements LoginBo{
 	public User validateLogin(LoginCredentials credentials) {
 		User user = loginDao.validateLogin(credentials);
 		return user;
+		//Test
 	}
 }
