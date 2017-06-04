@@ -1,5 +1,7 @@
 package com.sis.rest.utilities;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
@@ -10,7 +12,7 @@ import com.mongodb.client.MongoDatabase;
 public class MongoDataSourceFactory {
 
 	private static final MongoDataSourceFactory instance = new MongoDataSourceFactory();
-	
+	private static final Logger logger = LogManager.getLogger(MongoDataSourceFactory.class);
 	private MongoDataSourceFactory(){
 		
 	}
@@ -47,7 +49,7 @@ public class MongoDataSourceFactory {
 	 */
 	public MongoDatabase getMySISDataSource() {
 		MongoDatabase db = getMongoClient().getDatabase("sis");
-		System.out.println("Connect to database successfully");
+		logger.debug("Connect to database successfully");
 		return db;
 	}	
 	
@@ -56,7 +58,7 @@ public class MongoDataSourceFactory {
 	 */
 	public void closeMySISDataSource() {
 		getMongoClient().close();
-		System.out.println("Connection closed");
+		logger.debug("Connection closed");
 	}
 	
 	/**

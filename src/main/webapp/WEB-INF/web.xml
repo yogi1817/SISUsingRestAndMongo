@@ -5,13 +5,13 @@
     version="3.0">
 	<display-name>SIS Using Rest And Mongoose</display-name>
 
-	<servlet>
+	<!-- <servlet>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
     </servlet>
     <servlet-mapping>
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
 
 	<security-constraint>
         <display-name>Basic Auth Constraint</display-name>

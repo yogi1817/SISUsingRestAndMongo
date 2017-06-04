@@ -2,8 +2,13 @@ package com.sis.rest.utilities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class DateUtility {
 	public static boolean isDateBetweenTwoDates(Date startDate, Date endDate, Date givenDate){
@@ -99,5 +104,50 @@ public class DateUtility {
 		sdf.applyPattern(newFormat);
 		newDate = sdf.format(d);
 		return newDate;
+	}
+	
+	public static long daysBetween(LocalDate start, LocalDate end, List<DayOfWeek> ignore) {
+	    return Stream.iterate(start, d->d.plusDays(1))
+	                 .limit(start.until(end, ChronoUnit.DAYS))
+	                 .filter(d->!ignore.contains(d.getDayOfWeek()))
+	                 .count();
+	}
+	
+	public static Date changeDateFormat(Date inputDate, String outputFormat){
+		String inputDateString = new SimpleDateFormat(outputFormat).format(inputDate);
+		Date outputDate = null;
+		try {
+			outputDate = new SimpleDateFormat(outputFormat).parse(inputDateString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return outputDate;
+	}
+	
+	public static Date getDateForDay(String day){
+		Calendar c = Calendar.getInstance();
+		c.setFirstDayOfWeek(getDayToNumber(day));
+		c.setTime(new Date());
+		int today = c.get(Calendar.DAY_OF_WEEK);
+		c.add(Calendar.DAY_OF_WEEK, -today+getDayToNumber(day));
+		return changeDateFormat(c.getTime(), "yyyy-MM-dd");
+	}
+	
+	/**
+	 * 
+	 * @param day
+	 * @return
+	 */
+	private static int getDayToNumber(String day){
+		switch(day){
+			case "monday": return 1;
+			case "tuesday": return 2;
+			case "wednesday": return 3;
+			case "thursday": return 4;
+			case "friday": return 5;
+			case "saturday": return 6;
+		}
+		return 1;
 	}
 }

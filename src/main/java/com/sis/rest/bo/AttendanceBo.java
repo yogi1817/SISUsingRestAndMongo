@@ -11,5 +11,6 @@ import com.sis.rest.pojo.Attendance;
  *
  */
 public interface AttendanceBo {
-	boolean submitAttendance(List<Attendance> attendanceMatrixJson, String subject);
+	boolean submitAttendance(List<Attendance> attendanceMatrixJson, String subjectName);
+	List<Attendance> getAttendance(String subjectName, String userName);
 }

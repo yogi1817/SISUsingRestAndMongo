@@ -2,6 +2,9 @@ package com.sis.rest.dao.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 
@@ -18,6 +21,8 @@ public class LoginDaoImpl implements LoginDao{
 	
 	MongoDatabase dbConnection = null;
 	
+	private static final Logger logger = LogManager.getLogger(LoginDaoImpl.class);
+	
 	public LoginDaoImpl() {		
 		dataSourceFactory = MongoDataSourceFactory.getInstance();
 		morphiaDataStore = dataSourceFactory.getMorphiaSISDataStore();
@@ -30,8 +35,9 @@ public class LoginDaoImpl implements LoginDao{
 					.filter("userId", credentials.getUserName())
 					.filter("password", credentials.getPassword());
 			
+			logger.debug("authenticatedUserQuery in validateLogin "+authenticatedUserQuery);
 			List<User> authenticatedUserList = authenticatedUserQuery.asList();
-			if(authenticatedUserList!=null)
+			if(CollectionUtils.isNotEmpty(authenticatedUserList))
 				return authenticatedUserList.get(0);
 			
 			return null;

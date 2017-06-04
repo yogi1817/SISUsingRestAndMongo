@@ -1,13 +1,12 @@
 package com.sis.rest.resources;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import com.sis.rest.bo.LoginBo;
 import com.sis.rest.bo.impl.LoginBoImpl;
@@ -28,8 +27,6 @@ public class LoginService {
 	public LoginService() {
 		loginBo = new LoginBoImpl();
 	}
-	@Context
-    SecurityContext sctx;
 	
 	@POST
 	@Path("/validateUser")
@@ -38,7 +35,9 @@ public class LoginService {
 	public Response validateLogin(LoginCredentials credentials) {
 		String authenticatedUser = null;
 		User user = loginBo.validateLogin(credentials);
-		if(user!=null){
+		if(user==null){
+			throw new NotAuthorizedException("Invalid UserID and Password Combination");
+		}else{
 			authenticatedUser = credentials.getUserName();
 		}
 		

@@ -1,10 +1,15 @@
 package com.sis.rest.pojo;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@XmlRootElement(name = "attendance")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Attendance implements Serializable{
 
 	/**
@@ -15,6 +20,8 @@ public class Attendance implements Serializable{
 	private List<Date> datesAbsent; 
 	private int rollNo;
 	private String day;
+	private String monthName;
+	private float percentageAbsent;
 	/**
 	 * @return the rollNo
 	 */
@@ -41,37 +48,6 @@ public class Attendance implements Serializable{
 	}
 	
 	/**
-	 * This method converts day of the week to date of that week
-	 * @param date
-	 * @return
-	 */
-	public Date getDateForDay(String day){
-		Calendar c = Calendar.getInstance();
-		c.setFirstDayOfWeek(getDayToNumber(day));
-		c.setTime(new Date());
-		int today = c.get(Calendar.DAY_OF_WEEK);
-		c.add(Calendar.DAY_OF_WEEK, -today+getDayToNumber(day));
-		return c.getTime();
-	}
-	
-	/**
-	 * 
-	 * @param day
-	 * @return
-	 */
-	private int getDayToNumber(String day){
-		switch(day){
-			case "monday": return 1;
-			case "tuesday": return 2;
-			case "wednesday": return 3;
-			case "thursday": return 4;
-			case "friday": return 5;
-			case "saturday": return 6;
-		}
-		return 1;
-	}
-	
-	/**
 	 * @return the subjectName
 	 */
 	public String getSubjectName() {
@@ -94,5 +70,29 @@ public class Attendance implements Serializable{
 	 */
 	public void setDatesAbsent(List<Date> datesAbsent) {
 		this.datesAbsent = datesAbsent;
+	}
+	/**
+	 * @return the monthName
+	 */
+	public String getMonthName() {
+		return monthName;
+	}
+	/**
+	 * @param monthName the monthName to set
+	 */
+	public void setMonthName(String monthName) {
+		this.monthName = monthName;
+	}
+	/**
+	 * @return the percentageAbsent
+	 */
+	public float getPercentageAbsent() {
+		return percentageAbsent;
+	}
+	/**
+	 * @param percentageAbsent the percentageAbsent to set
+	 */
+	public void setPercentageAbsent(float percentageAbsent) {
+		this.percentageAbsent = percentageAbsent;
 	}
 }

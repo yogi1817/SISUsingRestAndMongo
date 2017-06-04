@@ -1,6 +1,7 @@
 package com.sis.rest.resources.util;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -10,6 +11,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
@@ -27,8 +31,11 @@ public class JWTAuthFilter implements ContainerRequestFilter {
 	@Context 
 	private ExtendedUriInfo uriInfo;
 	
+	private static final Logger logger = LogManager.getLogger(JWTAuthFilter.class);
+	
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+    	ThreadContext.push("myUuid", UUID.randomUUID());
         String authHeaderVal = requestContext.getHeaderString("customAuthorization");
         String userName = requestContext.getHeaderString("userName");
 
@@ -38,11 +45,11 @@ public class JWTAuthFilter implements ContainerRequestFilter {
         }
         //consume JWT i.e. execute signature validation
         if (!(requestContext.getMethod().equals("OPTIONS") || uriInfo.getPath().equals("login/validateUser"))){
-        	if(authHeaderVal.startsWith("Bearer")) {
+        	if(authHeaderVal!=null && authHeaderVal.startsWith("Bearer")) {
                 try {
                     final String subject = validate(authHeaderVal.split(" ")[1], userName);
                     if (subject == null) {
-                    	System.out.println("The userName does not match with the logged in user");
+                    	logger.error("The userName does not match with the logged in user");
                         requestContext.setProperty("auth-failed", true);
                         requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
                     }
@@ -71,7 +78,7 @@ public class JWTAuthFilter implements ContainerRequestFilter {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
             subject = (String) jwtClaims.getClaimValue("sub");
             if(("["+userName+"]").equals(subject))
-            	System.out.println("JWT validation succeeded! " + jwtClaims);
+            	logger.info("JWT validation succeeded! " + jwtClaims);
             else
             	subject = null;
         } catch (InvalidJwtException e) {

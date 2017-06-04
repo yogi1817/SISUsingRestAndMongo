@@ -24,6 +24,7 @@ public class CORSResponseFilter implements ContainerResponseFilter {
 		headers.add("Access-Control-Expose-Headers", "authenticatedUser, jwt, role");
 		//The below line tells what header are allowed in request header
 		headers.add("Access-Control-Request-Headers", "customAuthorization, userName");
+		headers.add("Access-Control-Allow-Credentials", true);
 	}
 
 }

@@ -14,7 +14,33 @@ public class Assignment implements Serializable{
 	private Date dateCreated;
 	private Date completionDate;
 	private String uploadLocation;
+	private String downloadLocation;
 	private String classAndSection;
+	private Boolean completedFlag;
+	
+	public Assignment(){
+		
+	}
+	
+	public Assignment(String subject, String assignmentName, Date dateCreated,
+						Date completionDate, String uploadLocation, String classAndSection){
+		this.subject = subject;
+		this.assignmentName = assignmentName;
+		this.classAndSection = classAndSection;
+		this.completionDate = completionDate;
+		this.dateCreated = dateCreated;
+		this.uploadLocation = uploadLocation;
+	}
+	
+	public Assignment(String subject, String assignmentName, Date dateCreated,
+			Date completionDate, String downloadLocation, boolean completedFlag){
+		this.subject = subject;
+		this.assignmentName = assignmentName;
+		this.completionDate = completionDate;
+		this.dateCreated = dateCreated;
+		this.downloadLocation = downloadLocation;
+		this.completedFlag = completedFlag;
+	}
 	/**
 	 * @return the subject
 	 */
@@ -86,5 +112,33 @@ public class Assignment implements Serializable{
 	 */
 	public void setClassAndSection(String classAndSection) {
 		this.classAndSection = classAndSection;
+	}
+
+	/**
+	 * @return the downloadLocation
+	 */
+	public String getDownloadLocation() {
+		return downloadLocation;
+	}
+
+	/**
+	 * @param downloadLocation the downloadLocation to set
+	 */
+	public void setDownloadLocation(String downloadLocation) {
+		this.downloadLocation = downloadLocation;
+	}
+
+	/**
+	 * @return the completedFlag
+	 */
+	public Boolean isCompletedFlag() {
+		return completedFlag;
+	}
+
+	/**
+	 * @param completedFlag the completedFlag to set
+	 */
+	public void setCompletedFlag(Boolean completedFlag) {
+		this.completedFlag = completedFlag;
 	}
 }
