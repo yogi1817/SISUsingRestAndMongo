@@ -3,6 +3,17 @@ package com.sis.rest.pojo;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * 
+ * @author 618730
+ *
+ */
+@XmlRootElement(name = "assignment")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Assignment implements Serializable{
 
 	/**

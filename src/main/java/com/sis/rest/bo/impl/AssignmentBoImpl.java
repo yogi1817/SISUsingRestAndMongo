@@ -17,6 +17,7 @@ import com.sis.rest.dao.AssignmentDao;
 import com.sis.rest.dao.impl.AdminDaoImpl;
 import com.sis.rest.dao.impl.AssignmentDaoImpl;
 import com.sis.rest.pojo.Assignment;
+import com.sis.rest.pojo.ClassDetail;
 import com.sis.rest.pojo.User;
 
 /**
@@ -75,5 +76,24 @@ public class AssignmentBoImpl implements AssignmentBo{
 			uploadAssignmentFlag = assignmentDao.updateMongoForAssignment(assignmentTeacher, assignmentStudent, userId, userList);
 		
 		return uploadAssignmentFlag;
+	}
+
+	@Override
+	public List<Assignment> getAssignments(String userName) {
+		return assignmentDao.getAssignments(userName);
+	}
+
+	@Override
+	public String getFilePath(String userName, String subject) {
+		User user = assignmentDao.getUserDetails(userName);
+		
+		if(user==null)
+			return null;
+		
+		ClassDetail classDetail = user.getClassDetails().get(0);
+		String filePath = parentdDirectory+classDetail.getClassNo()+"/"+
+					classDetail.getSection()+"/"+subject+"/";
+					
+		return filePath;
 	}
 }
