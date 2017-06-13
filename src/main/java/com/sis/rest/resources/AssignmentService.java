@@ -77,10 +77,10 @@ public class AssignmentService {
 	@GET
 	@Path("/student/{subject}/{assignmentName}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response downloadFile(@PathParam("assignmentName") String assignmentName,
+	public Response downloadFile(@PathParam("assignmentName") final String assignmentName,
 			@PathParam("subject") String subject,
 			@HeaderParam("userName") String userName) {
-		String filePath = assignmentBo.getFilePath(userName, subject);
+		final String filePath = assignmentBo.getFilePath(userName, subject);
 	    
 		if(null==filePath){
 	    	throw new NotFoundException("You dont have access to this assignment");
