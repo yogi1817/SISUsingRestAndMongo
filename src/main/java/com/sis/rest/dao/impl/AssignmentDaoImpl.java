@@ -40,59 +40,57 @@ public class AssignmentDaoImpl implements AssignmentDao{
 		//update teacher object
 		Query<User> findAssignmentQuery = morphiaDataStore.find(User.class)
 				.filter("userId", userId)
-				.filter("assignment.subject", assignmentTeacher.getSubject())
+				//.filter("assignment.subject", assignmentTeacher.getSubject())
 				.filter("assignment.assignmentName", assignmentTeacher.getAssignmentName());
 		
 		List<User> assigmentList = findAssignmentQuery.asList();
-		if(!CollectionUtils.isEmpty(assigmentList)){
-			logger.info("findAssignmentQuery in updateMongoForAssignment"+findAssignmentQuery);
+		if(CollectionUtils.isEmpty(assigmentList)){
+
+			findUserQuery = morphiaDataStore.find(User.class)
+					.filter("userId", userId);
+			
+			logger.info("findUserQuery in updateMongoForAssignment"+findUserQuery);
 	    	ops = morphiaDataStore.createUpdateOperations(User.class)
-	    		    			.addToSet("assignment.$", assignmentTeacher);
+	    		    			.push("assignment", assignmentTeacher);
 	    	
 	    	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
-	    	morphiaDataStore.update(findAssignmentQuery, ops);
+	    	morphiaDataStore.update(findUserQuery, ops);
 	    	
 	    	//find out student list
 	    	for (User user : userList) {
 	    		findUserQuery = morphiaDataStore.find(User.class)
-	    				.filter("_id", user.getId())
-	    				.filter("assignment.subject", assignmentTeacher.getSubject())
-	    				.filter("assignment.assignmentName", assignmentTeacher.getAssignmentName());
+	    				.filter("userId", user.getUserId());
 	    		
 	    		logger.info("findUserQuery for Student in updateMongoForAssignment"+findUserQuery);
 	        	ops = morphiaDataStore.createUpdateOperations(User.class)
-	        		    			.addToSet("assignment.$", assignmentStudent);
+	        		    			.push("assignment", assignmentStudent);
 	        	
 	        	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
 	        	morphiaDataStore.update(findUserQuery, ops);
 			}
 	    	
-	    	return true;
+		}else{	
+	    	//adds the new entry
+	    	ops = morphiaDataStore.createUpdateOperations(User.class)
+	    		    			.set("assignment.$.completionDate", assignmentTeacher.getCompletionDate());
+	    	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
+	    	morphiaDataStore.update(findAssignmentQuery, ops);
+	    	
+	    	//find out student list
+	    	for (User user : userList) {
+	    		findAssignmentQuery = morphiaDataStore.find(User.class)
+						.filter("userId", user.getUserId())
+						//.filter("assignment.subject", assignmentTeacher.getSubject())
+						.filter("assignment.assignmentName", assignmentTeacher.getAssignmentName());
+		    	
+	    		logger.info("findUserQuery for Student in updateMongoForAssignment"+findUserQuery);
+	        	ops = morphiaDataStore.createUpdateOperations(User.class)
+	        		    			.set("assignment.$.completionDate", assignmentStudent.getCompletionDate());
+	        	
+	        	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
+	        	morphiaDataStore.update(findAssignmentQuery, ops);
+			}
 		}
-		
-		findUserQuery = morphiaDataStore.find(User.class)
-				.filter("userId", userId);
-		
-		logger.info("findUserQuery in updateMongoForAssignment"+findUserQuery);
-    	ops = morphiaDataStore.createUpdateOperations(User.class)
-    		    			.addToSet("assignment", assignmentTeacher);
-    	
-    	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
-    	morphiaDataStore.update(findUserQuery, ops);
-    	
-    	//find out student list
-    	for (User user : userList) {
-    		findUserQuery = morphiaDataStore.find(User.class)
-    				.filter("_id", user.getId());
-    		
-    		logger.info("findUserQuery for Student in updateMongoForAssignment"+findUserQuery);
-        	ops = morphiaDataStore.createUpdateOperations(User.class)
-        		    			.addToSet("assignment", assignmentStudent);
-        	
-        	logger.info("UpdateOperations in updateMongoForAssignment "+ops);
-        	morphiaDataStore.update(findUserQuery, ops);
-		}
-    	
 		return true;
 	}
 
@@ -121,5 +119,23 @@ public class AssignmentDaoImpl implements AssignmentDao{
 			return user;
 		
 		return null;
+	}
+
+	@Override
+	public boolean updateMongoForStudentAssignment(Assignment assignmentStudent, 
+			String userId, String assignmentPath) {
+		Query<User> findAssignmentQuery = morphiaDataStore.find(User.class)
+				.filter("userId", userId)
+				.filter("assignment.assignmentName", assignmentStudent.getAssignmentName());
+		
+		UpdateOperations<User> ops = morphiaDataStore.createUpdateOperations(User.class)
+    			.set("assignment.$.completionDate", assignmentStudent.getCompletionDate())
+    			.set("assignment.$.uploadLocation", assignmentPath);
+		
+		logger.info("UpdateOperations in updateMongoForAssignment "+ops);
+		morphiaDataStore.update(findAssignmentQuery, ops);
+
+		
+		return false;
 	}
 }

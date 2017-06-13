@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -55,7 +54,7 @@ public class AssignmentService {
 		
 		
 		boolean loadAssignmentFlag = assignmentBo.uploadAssignment(classNo, section, 
-										subject, new Date(), userName, uploadedInputStream, fileDetail);
+										subject, completionDate, userName, uploadedInputStream, fileDetail);
 		
 		return Response.ok(loadAssignmentFlag)
 				.build();
@@ -117,5 +116,23 @@ public class AssignmentService {
 	    response.header("Content-Disposition", "attachment;filename="+assignmentName);
 	    
 	    return response.build();*/
+	}
+	
+	@POST
+	@Path("/student")
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response loadStudentAssignments(@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail, 
+			@FormDataParam("class") String classNo, @FormDataParam("section") String section,
+			@FormDataParam("subject") String subject,
+			@HeaderParam("userName") String userName) {
+		
+		
+		boolean loadAssignmentFlag = assignmentBo.uploadStudentAssignment(classNo, section, 
+										subject, userName, uploadedInputStream, fileDetail);
+		
+		return Response.ok(loadAssignmentFlag)
+				.build();
 	}
 }

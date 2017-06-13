@@ -12,4 +12,7 @@ public interface AssignmentDao {
 	List<Assignment> getAssignments(String userName);
 	
 	User getUserDetails(String userName);
+	
+	boolean updateMongoForStudentAssignment(Assignment assignmentStudent, 
+			String userId, String assignmentPath);
 }

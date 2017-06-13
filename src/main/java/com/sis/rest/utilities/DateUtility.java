@@ -2,13 +2,8 @@ package com.sis.rest.utilities;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class DateUtility {
 	public static boolean isDateBetweenTwoDates(Date startDate, Date endDate, Date givenDate){
@@ -106,12 +101,12 @@ public class DateUtility {
 		return newDate;
 	}
 	
-	public static long daysBetween(LocalDate start, LocalDate end, List<DayOfWeek> ignore) {
+	/*public static long daysBetween(LocalDate start, LocalDate end, List<DayOfWeek> ignore) {
 	    return Stream.iterate(start, d->d.plusDays(1))
 	                 .limit(start.until(end, ChronoUnit.DAYS))
 	                 .filter(d->!ignore.contains(d.getDayOfWeek()))
 	                 .count();
-	}
+	}*/
 	
 	public static Date changeDateFormat(Date inputDate, String outputFormat){
 		String inputDateString = new SimpleDateFormat(outputFormat).format(inputDate);
@@ -132,6 +127,19 @@ public class DateUtility {
 		int today = c.get(Calendar.DAY_OF_WEEK);
 		c.add(Calendar.DAY_OF_WEEK, -today+getDayToNumber(day));
 		return changeDateFormat(c.getTime(), "yyyy-MM-dd");
+	}
+	
+	public static Date stringToDate(String date){
+		SimpleDateFormat formattor= new SimpleDateFormat("yyyy-MM-dd");
+		Date formattedDate = null;
+		try {
+			formattedDate = formattor.parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return formattedDate;
+		//return changeDateFormat(formattor.parse(date), "yyyy-MM-dd");
 	}
 	
 	/**

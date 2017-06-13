@@ -1,11 +1,8 @@
 package com.sis.rest.bo.impl;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.ZoneId;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +53,8 @@ public class AttendanceBoImpl implements AttendanceBo{
 	@Override
 	public List<Attendance> getAttendance(String subjectName, String userName) {
 		User studentObject = attendanceDao.getAttendance(subjectName, userName);
-		List<Date> holidaysInCurrentYear = attendanceDao.getHolidaysForYear(Year.now().getValue());
+		int year = Calendar.getInstance().get(Calendar.YEAR);//Year.now().getValue() Java 8
+		List<Date> holidaysInCurrentYear = attendanceDao.getHolidaysForYear(year);
 		List<Attendance> attendance = convertStudentToAttendance(
 				studentObject.getAttendance()!=null ? studentObject.getAttendance().get(0).getDatesAbsent() : null, holidaysInCurrentYear);
 		return attendance;
@@ -69,13 +67,13 @@ public class AttendanceBoImpl implements AttendanceBo{
 	 * @return
 	 */
 	private List<Attendance> convertStudentToAttendance(List<Date> studentAttendance, List<Date> holidaysInCurrentYear){
-		Map<String, List<Date>> holidayForMonth = absenceDatesForMonth(holidaysInCurrentYear);
-		Map<String, List<Date>> absenceDatesForMonth = absenceDatesForMonth(studentAttendance);
+		Map<Integer, List<Date>> holidayForMonth = absenceDatesForMonth(holidaysInCurrentYear);
+		Map<Integer, List<Date>> absenceDatesForMonth = absenceDatesForMonth(studentAttendance);
 		List<Attendance> attendanceList = new ArrayList<Attendance>();
 		Attendance attendance = null;
-		for (Map.Entry<String, List<Date>> entry : absenceDatesForMonth.entrySet()) {
+		for (Map.Entry<Integer, List<Date>> entry : absenceDatesForMonth.entrySet()) {
 			attendance = new Attendance();
-			attendance.setMonthName(entry.getKey());
+			attendance.setMonthNo(entry.getKey());
 			attendance.setDatesAbsent(entry.getValue());
 			attendance.setPercentageAbsent(
 					calculatePercentage(entry.getKey(), entry.getValue().size(), holidayForMonth.get(entry.getKey()).size())
@@ -86,8 +84,10 @@ public class AttendanceBoImpl implements AttendanceBo{
 		return attendanceList;
 	}
 	
-	private float calculatePercentage(String monthName, int absenceDaysCount, int holidayDayCount){
-		int daysInGivenMonth = Month.valueOf(monthName).length(true);
+	private float calculatePercentage(Integer monthNo, int absenceDaysCount, int holidayDayCount){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		int daysInGivenMonth = calendar.getActualMaximum(Calendar.DATE); //Month.valueOf(monthName).length(true); Java 8
 		return (((float)absenceDaysCount*100)/(daysInGivenMonth-holidayDayCount));
 	}
 	/**
@@ -95,26 +95,48 @@ public class AttendanceBoImpl implements AttendanceBo{
 	 * @param studentAttendance
 	 * @return
 	 */
-	private Map<String, List<Date>> absenceDatesForMonth(List<Date> studentAttendance)
+	private Map<Integer, List<Date>> absenceDatesForMonth(List<Date> studentAttendance)
 	{
-		Map<String, List<Date>> absenceDatesForMonth = new HashMap<String, List<Date>>();
-		Instant instant = null;
-		LocalDate localDate = null;
-		String monthName = null;
+		Map<Integer, List<Date>> absenceDatesForMonth = new HashMap<Integer, List<Date>>();
+		/*Instant instant = null;
+		LocalDate localDate = null;*/
+		
+		//Java 7
+		Calendar now = Calendar.getInstance();
+		Integer monthNo;
+		//String monthName = null;
 		List<Date> datesAbsent = null;
 		for (Date absence : studentAttendance) {
-			instant = absence.toInstant();
+			/*instant = absence.toInstant();
 			localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-			monthName = localDate.getMonth().name();
-			
-			if(absenceDatesForMonth.containsKey(monthName)){
-				datesAbsent = absenceDatesForMonth.get(monthName);
+			monthName = localDate.getMonth().name();*/
+			now.setTime(absence);
+			monthNo = now.get(Calendar.MONTH);
+			//monthName = getMonthForInt(month);
+			if(absenceDatesForMonth.containsKey(monthNo)){
+				datesAbsent = absenceDatesForMonth.get(monthNo);
 			}else{
 				datesAbsent = new ArrayList<Date>();
 			}
 			datesAbsent.add(absence);
-			absenceDatesForMonth.put(monthName, datesAbsent);
+			absenceDatesForMonth.put(monthNo, datesAbsent);
 		}
 		return absenceDatesForMonth;
 	}
+	
+	
+	/**
+	 * Java7
+	 * @param num
+	 * @return
+	 */
+	String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
+    }
 }

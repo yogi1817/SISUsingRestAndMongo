@@ -26,14 +26,14 @@ public class AdminBoImpl implements AdminBo{
 		List<User> studentList = new ArrayList<User>();
 		
 		List<User> users= adminDao.getStudentsForAdmin(classNo, section, subject);
-		users.forEach(user -> 
+		for (User user : users) {
 			studentList.add(new User.StudentBuilder(
 		 				user.getFirstName(), user.getLastName())
 							.dob(user.getDob())
 							.rollNo(user.getRollNo())
 							.build()
-							)
-		);
+							);
+		}
 		return studentList;
 	}
 }

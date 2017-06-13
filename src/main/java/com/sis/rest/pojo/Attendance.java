@@ -20,7 +20,7 @@ public class Attendance implements Serializable{
 	private List<Date> datesAbsent; 
 	private int rollNo;
 	private String day;
-	private String monthName;
+	private Integer monthNo;
 	private float percentageAbsent;
 	/**
 	 * @return the rollNo
@@ -72,16 +72,16 @@ public class Attendance implements Serializable{
 		this.datesAbsent = datesAbsent;
 	}
 	/**
-	 * @return the monthName
+	 * @return the monthNo
 	 */
-	public String getMonthName() {
-		return monthName;
+	public Integer getMonthNo() {
+		return monthNo;
 	}
 	/**
-	 * @param monthName the monthName to set
+	 * @param monthNo the monthNo to set
 	 */
-	public void setMonthName(String monthName) {
-		this.monthName = monthName;
+	public void setMonthNo(Integer monthNo) {
+		this.monthNo = monthNo;
 	}
 	/**
 	 * @return the percentageAbsent

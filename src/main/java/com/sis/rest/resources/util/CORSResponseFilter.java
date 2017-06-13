@@ -18,12 +18,13 @@ public class CORSResponseFilter implements ContainerResponseFilter {
 
 		//headers.add("Access-Control-Allow-Origin", "*");
 		headers.add("Access-Control-Allow-Origin", "http://localhost:3000"); //allows CORS requests only coming from podcastpedia.org		
-		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");			
-		headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, userName, Authorization, role, customAuthorization");
+		headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS, HEAD");			
+		headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, userName, "
+				+ "Authorization, role, customAuthorization, If-None-Match, ETag");
 		//The below line will allow these headers to be available on angular side
-		headers.add("Access-Control-Expose-Headers", "authenticatedUser, jwt, role");
+		headers.add("Access-Control-Expose-Headers", "authenticatedUser, jwt, role, ETag");
 		//The below line tells what header are allowed in request header
-		headers.add("Access-Control-Request-Headers", "customAuthorization, userName");
+		headers.add("Access-Control-Request-Headers", "customAuthorization, userName, If-None-Match");
 		headers.add("Access-Control-Allow-Credentials", true);
 	}
 
