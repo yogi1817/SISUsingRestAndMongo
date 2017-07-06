@@ -10,12 +10,12 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.sis.rest.bo.AssignmentBo;
 import com.sis.rest.dao.AdminDao;
 import com.sis.rest.dao.AssignmentDao;
-import com.sis.rest.dao.impl.AdminDaoImpl;
-import com.sis.rest.dao.impl.AssignmentDaoImpl;
 import com.sis.rest.pojo.Assignment;
 import com.sis.rest.pojo.ClassDetail;
 import com.sis.rest.pojo.User;
@@ -26,17 +26,27 @@ import com.sis.rest.utilities.DateUtility;
  * @author 618730
  *
  */
+@Component
 public class AssignmentBoImpl implements AssignmentBo{
 	
+	@Autowired
 	private AssignmentDao assignmentDao;
+	@Autowired
 	private AdminDao adminDao;
+	
 	private final String teacherDirectory = "C:/Users/618730/Documents/SIS codebase/shareDrive/assignments/teacher/";
 	private final String studentDirectory = "C:/Users/618730/Documents/SIS codebase/shareDrive/assignments/student/";
-	public AssignmentBoImpl() {
-		assignmentDao = new AssignmentDaoImpl();
-		adminDao = new AdminDaoImpl();
-	}
 	
+	/**
+	 * 
+	 * @param classNo
+	 * @param section
+	 * @param subject
+	 * @param fileName
+	 * @param uploadedInputStream
+	 * @param parentDirectory
+	 * @return
+	 */
 	private String loadFileOnDrive(String classNo, String section, String subject, 
 			String fileName, InputStream uploadedInputStream, String parentDirectory){
 		File file = new File(parentDirectory+classNo+"/"+section+"/"+subject+"/");
@@ -59,6 +69,9 @@ public class AssignmentBoImpl implements AssignmentBo{
 		return file.getAbsolutePath();
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public boolean uploadAssignment(String classNo, String section, String subject, 
 			String completionDate, String userId,
@@ -84,11 +97,17 @@ public class AssignmentBoImpl implements AssignmentBo{
 		return uploadAssignmentFlag;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public List<Assignment> getAssignments(String userName) {
 		return assignmentDao.getAssignments(userName);
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public String getFilePath(String userName, String subject) {
 		User user = assignmentDao.getUserDetails(userName);
@@ -103,6 +122,9 @@ public class AssignmentBoImpl implements AssignmentBo{
 		return filePath;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public boolean uploadStudentAssignment(String classNo, String section, String subject, String userId,
 			InputStream uploadedInputStream, FormDataContentDisposition fileDetail) {

@@ -3,9 +3,11 @@ package com.sis.rest.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.sis.rest.bo.AdminBo;
 import com.sis.rest.dao.AdminDao;
-import com.sis.rest.dao.impl.AdminDaoImpl;
 import com.sis.rest.pojo.User;
 
 /**
@@ -13,13 +15,11 @@ import com.sis.rest.pojo.User;
  * @author 618730
  *
  */
+@Component
 public class AdminBoImpl implements AdminBo{
 	
+	@Autowired
 	private AdminDao adminDao;
-	
-	public AdminBoImpl() {
-		adminDao = new AdminDaoImpl();
-	}
 
 	@Override
 	public List<User> getStudentsForAdmin(int classNo, String section, String subject) {

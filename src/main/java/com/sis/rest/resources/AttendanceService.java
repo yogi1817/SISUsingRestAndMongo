@@ -12,8 +12,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.sis.rest.bo.AttendanceBo;
-import com.sis.rest.bo.impl.AttendanceBoImpl;
 import com.sis.rest.pojo.Attendance;
 
 /**
@@ -24,11 +25,8 @@ import com.sis.rest.pojo.Attendance;
 @Path("/attendance")
 public class AttendanceService {
 
+	@Autowired
 	private AttendanceBo attendanceBo;
-	
-	public AttendanceService() {
-		attendanceBo = new AttendanceBoImpl();
-	}
 	
 	@POST
 	@Path("")

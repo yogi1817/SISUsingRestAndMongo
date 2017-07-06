@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.sis.rest.bo.AttendanceBo;
 import com.sis.rest.dao.AttendanceDao;
-import com.sis.rest.dao.impl.AttendanceDaoImpl;
 import com.sis.rest.pojo.Attendance;
 import com.sis.rest.pojo.User;
 import com.sis.rest.utilities.DateUtility;
@@ -20,13 +22,11 @@ import com.sis.rest.utilities.DateUtility;
  * @author 618730
  *
  */
+@Component
 public class AttendanceBoImpl implements AttendanceBo{
 	
+	@Autowired
 	private AttendanceDao attendanceDao;
-	
-	public AttendanceBoImpl() {
-		attendanceDao = new AttendanceDaoImpl();
-	}
 
 	@Override
 	public boolean submitAttendance(List<Attendance> attendanceList, String subject) {
@@ -75,8 +75,10 @@ public class AttendanceBoImpl implements AttendanceBo{
 			attendance = new Attendance();
 			attendance.setMonthNo(entry.getKey());
 			attendance.setDatesAbsent(entry.getValue());
+			
+			int holidayCount = holidayForMonth.get(entry.getKey())==null?0:holidayForMonth.get(entry.getKey()).size();
 			attendance.setPercentageAbsent(
-					calculatePercentage(entry.getKey(), entry.getValue().size(), holidayForMonth.get(entry.getKey()).size())
+					calculatePercentage(entry.getKey(), entry.getValue().size(), holidayCount)
 					);
 			
 			attendanceList.add(attendance);

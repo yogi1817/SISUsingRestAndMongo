@@ -6,9 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @XmlRootElement(name = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Entity("users")
+@Document(collection = "users")
 public class User implements Serializable{
 
 	/**
@@ -27,7 +26,7 @@ public class User implements Serializable{
 	 */
 	private static final long serialVersionUID = -5689992839054584351L;
 	@Id
-	private ObjectId id;
+	private String id;
 	private String firstName;
 	private String lastName;
 	private String password;
@@ -38,7 +37,7 @@ public class User implements Serializable{
 	private String role;
 	private int rollNo;
 	private List<ClassDetail> classDetails;
-	private List<Address> address;
+	private Address address;
 	private List<Assignment> assignment;
 	private List<Attendance> attendance;
 	
@@ -152,13 +151,13 @@ public class User implements Serializable{
 	/**
 	 * @return the id
 	 */
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	/**
@@ -176,13 +175,13 @@ public class User implements Serializable{
 	/**
 	 * @return the address
 	 */
-	public List<Address> getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 	/**
 	 * @param address the address to set
 	 */
-	public void setAddress(List<Address> address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 	/**

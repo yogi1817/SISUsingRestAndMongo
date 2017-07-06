@@ -7,14 +7,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sis.rest.bo.AdminBo;
-import com.sis.rest.bo.impl.AdminBoImpl;
 import com.sis.rest.pojo.User;
 
 /**
@@ -25,11 +24,8 @@ import com.sis.rest.pojo.User;
 @Path("/admin")
 public class AdminService {
 
+	@Autowired
 	private AdminBo adminBo;
-	
-	public AdminService() {
-		adminBo = new AdminBoImpl();
-	}
 	
 	@GET
 	@Path("/students")
@@ -44,7 +40,7 @@ public class AdminService {
 		cc.setMaxAge(86400);
 		cc.setPrivate(true);*/
 		
-		int hashcode = 0;
+		/*int hashcode = 0;
 		for (User student : studentList) {
 			hashcode+= (classNo+student.getRollNo());
 		}
@@ -57,6 +53,9 @@ public class AdminService {
 		}
 		
 		//builder.cacheControl(cc);
-		return builder.build();
+		return builder.build();*/
+		
+		return Response.ok(studentList)
+				.build();
 	}	
 }

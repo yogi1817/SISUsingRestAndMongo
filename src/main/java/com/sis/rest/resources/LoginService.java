@@ -8,8 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.sis.rest.bo.LoginBo;
-import com.sis.rest.bo.impl.LoginBoImpl;
 import com.sis.rest.pojo.LoginCredentials;
 import com.sis.rest.pojo.User;
 import com.sis.rest.utilities.security.JWTokenUtility;
@@ -22,11 +23,8 @@ import com.sis.rest.utilities.security.JWTokenUtility;
 @Path("/login")
 public class LoginService {
 
+	@Autowired
 	private LoginBo loginBo;
-	
-	public LoginService() {
-		loginBo = new LoginBoImpl();
-	}
 	
 	@POST
 	@Path("/validateUser")
@@ -46,5 +44,5 @@ public class LoginService {
 				.header("authenticatedUser", authenticatedUser)
 				.header("role", user.getRole())
 				.build();
-	}	
+	}
 }

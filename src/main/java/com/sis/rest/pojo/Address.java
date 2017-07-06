@@ -12,7 +12,7 @@ public class Address implements Serializable{
 	private String aptNo;
 	private String city;
 	private String state;
-	private Integer zip;
+	private int zip;
 	/**
 	 * @return the streetAddress
 	 */
@@ -64,13 +64,13 @@ public class Address implements Serializable{
 	/**
 	 * @return the zip
 	 */
-	public Integer getZip() {
+	public int getZip() {
 		return zip;
 	}
 	/**
 	 * @param zip the zip to set
 	 */
-	public void setZip(Integer zip) {
+	public void setZip(int zip) {
 		this.zip = zip;
 	}
 }

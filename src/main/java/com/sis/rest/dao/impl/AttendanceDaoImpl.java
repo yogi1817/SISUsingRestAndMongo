@@ -9,31 +9,29 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.aggregation.AggregationPipeline;
-import org.mongodb.morphia.query.Query;
-import org.mongodb.morphia.query.UpdateOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
 
-import com.mongodb.client.MongoDatabase;
 import com.sis.rest.dao.AttendanceDao;
+import com.sis.rest.dao.repository.UserOperations;
 import com.sis.rest.pojo.HolidayCalendar;
 import com.sis.rest.pojo.Month;
 import com.sis.rest.pojo.User;
-import com.sis.rest.utilities.MongoDataSourceFactory;
 
+@Repository
 public class AttendanceDaoImpl implements AttendanceDao{
-
-	MongoDataSourceFactory dataSourceFactory = null;
-	Datastore morphiaDataStore = null; 
 	
-	MongoDatabase dbConnection = null;
+	@Autowired
+	MongoOperations mongoOpers;
+	
+	@Autowired
+	UserOperations userOpers;
 	
 	private static final Logger logger = LogManager.getLogger(AttendanceDaoImpl.class);
-	
-	public AttendanceDaoImpl() {		
-		dataSourceFactory = MongoDataSourceFactory.getInstance();
-		morphiaDataStore = dataSourceFactory.getMorphiaSISDataStore();
-	}
 	
 	@Override
 	public boolean submitAttendance(Map<Integer, List<Date>> attendanceMap, String subject) {
@@ -43,51 +41,31 @@ public class AttendanceDaoImpl implements AttendanceDao{
 	    	Map.Entry<Integer, List<Date>> pair = (Map.Entry<Integer, List<Date>>)it.next();
 	    	rollNo = pair.getKey();
 	    	
-	    	Query<User> findUserQuery = morphiaDataStore.find(User.class)
-					.filter("rollNo", rollNo)
-	    			.filter("attendance.subjectName ", subject);
+	    	Query query = Query.query(Criteria.where("rollNo").is(rollNo)
+	    			.and("attendance.subjectName").is(subject));
 	    	
-	    	logger.info("findUserQuery in submitAttendance"+findUserQuery);
-	    	UpdateOperations<User> ops = morphiaDataStore.createUpdateOperations(User.class)
-	    		    			.addToSet("attendance.$.datesAbsent", pair.getValue());
+	    	Update update = new Update();
+	    	update.addToSet("attendance.$.datesAbsent").each(pair.getValue());
 	    	
-	    	logger.info("UpdateOperations in submitAttendance "+ops);
-	    	morphiaDataStore.update(findUserQuery, ops);
+	    	mongoOpers.updateFirst(query, update, User.class);
 	    }	
 		return true;
 	}
 
 	@Override
 	public User getAttendance(String subjectName, String userName) {
-		Query<User> userQuery = morphiaDataStore.find(User.class)
-				.filter("userId", userName);
-				
-		logger.info("userQuery in getAttendance "+userQuery);
-		Query<User> subjectQuery = morphiaDataStore.find(User.class)
-    			.filter("attendance.subjectName", subjectName);
-						
-		logger.info("subjectQuery in getAttendance "+subjectQuery);
-		AggregationPipeline pipeline = morphiaDataStore.createAggregation(User.class)
-                .match(userQuery)
-                .unwind("attendance")
-                .match(subjectQuery);
-		
-		logger.info("pipeline in getAttendance "+pipeline);
-		Iterator<User> user = pipeline.aggregate(User.class);
-		
-		return user.next();
+		return userOpers.getAttendanceForUserIdAndSubject(subjectName, userName);
 	}
 
 	@Override
 	public List<Date> getHolidaysForYear(int year) {
 		
 		List<Date> holidayDates = new ArrayList<Date>();
-		Query<HolidayCalendar> attendanceQuery = morphiaDataStore.find(HolidayCalendar.class)
-				.filter("year", ""+year);
+		Query query = Query.query(Criteria.where("year").is(year));
+		logger.debug("query in getHolidays "+query);
 		
-		logger.debug("attendanceQuery in getHolidaysForYear "+attendanceQuery);
+		HolidayCalendar holidayForYear = mongoOpers.findOne(query, HolidayCalendar.class);
 		
-		HolidayCalendar holidayForYear = attendanceQuery.get();
 		for (Month month : holidayForYear.getMonth()) {
 			holidayDates.addAll(month.getHolidayDates());
 		}

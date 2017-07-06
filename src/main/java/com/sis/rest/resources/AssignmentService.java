@@ -22,9 +22,9 @@ import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.collections4.CollectionUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sis.rest.bo.AssignmentBo;
-import com.sis.rest.bo.impl.AssignmentBoImpl;
 import com.sis.rest.pojo.Assignment;
 
 /**
@@ -35,11 +35,8 @@ import com.sis.rest.pojo.Assignment;
 @Path("/assignments")
 public class AssignmentService {
 
+	@Autowired
 	private AssignmentBo assignmentBo;
-	
-	public AssignmentService() {
-		assignmentBo = new AssignmentBoImpl();
-	}
 	
 	@POST
 	@Path("/admin")
