@@ -39,7 +39,7 @@
         <junit>4.12</junit>
         <jackson>2.3.3</jackson>
         <jax.ws.rs>2.1-m09</jax.ws.rs>
-        <log4j>2.8.2</log4j>
+        <log4j>2.14.1</log4j>
         <commons-collections>4.0</commons-collections>
     </properties>
     
