@@ -40,7 +40,7 @@
         <jackson>2.3.3</jackson>
         <jax.ws.rs>2.1-m09</jax.ws.rs>
         <log4j>2.16.0</log4j>
-        <commons-collections>4.0</commons-collections>
+        <commons-collections>4.1</commons-collections>
     </properties>
     
 	<repositories>
